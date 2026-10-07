@@ -329,3 +329,63 @@ def student_export(mssv):
     )
 
     return response
+@app.route(
+    "/api/students/<mssv>/scores/<course>",
+    methods=["GET", "PUT", "DELETE"]
+)
+def api_student_score(mssv, course):
+    if mssv not in STUDENTS:
+        abort(404, description="Không tìm thấy sinh viên.")
+
+    course = course.upper()
+    scores = STUDENTS[mssv]["scores"]
+
+    if request.method == "GET":
+        if course not in scores:
+            abort(404, description="Chưa có điểm học phần này.")
+
+        return jsonify({
+            "mssv": mssv,
+            "course": course,
+            "score": scores[course]
+        })
+
+    if request.method == "PUT":
+        data = request.get_json(silent=True)
+
+        if not isinstance(data, dict):
+            abort(400, description="Dữ liệu phải là đối tượng JSON.")
+
+        score = data.get("score")
+
+        if (
+            isinstance(score, bool)
+            or not isinstance(score, (int, float))
+            or not 0 <= score <= 10
+        ):
+            abort(400, description="Điểm phải là số từ 0 đến 10.")
+
+        is_new = course not in scores
+        scores[course] = score
+
+        response = jsonify({
+            "mssv": mssv,
+            "course": course,
+            "score": score
+        })
+
+        if is_new:
+            response.status_code = 201
+            response.headers["Location"] = url_for(
+                "api_student_score",
+                mssv=mssv,
+                course=course
+            )
+
+        return response
+
+    if course not in scores:
+        abort(404, description="Chưa có điểm học phần này.")
+
+    del scores[course]
+    return "", 204
