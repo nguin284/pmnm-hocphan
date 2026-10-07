@@ -171,7 +171,41 @@ def student_list():
 
 @app.route("/search")
 def search():
-    return layout("Tìm kiếm", "<h1>Tìm kiếm sinh viên</h1>")
+    keyword = request.args.get("q", "")
+    results = []
+
+    for mssv, student in STUDENTS.items():
+        if (
+            keyword.lower() in student["name"].lower()
+            or keyword.lower() in mssv.lower()
+        ):
+            results.append((mssv, student))
+
+    body = f"""
+    <h1>Tìm kiếm sinh viên</h1>
+    <form method="get" action="{escape(url_for('search'))}">
+        <input type="text" name="q" value="{escape(keyword)}">
+        <button type="submit">Tìm kiếm</button>
+    </form>
+    <p>
+        Tìm thấy {escape(str(len(results)))} kết quả
+        cho “{escape(keyword)}”
+    </p>
+    <ul>
+    """
+
+    for mssv, student in results:
+        body += f"""
+        <li>
+            <a href="{escape(url_for('student_detail', mssv=mssv))}">
+                {escape(mssv)} - {escape(student['name'])}
+            </a>
+        </li>
+        """
+
+    body += "</ul>"
+
+    return layout("Tìm kiếm", body)
 @app.route("/api/students")
 def api_student_list():
     return []
