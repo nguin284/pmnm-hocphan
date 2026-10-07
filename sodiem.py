@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, abort
+from flask import Flask, url_for, request, abort, redirect
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -220,5 +220,14 @@ def student_detail(mssv):
         body += "</table>"
     else:
         body += "<p>Chưa có điểm.</p>"
-
+    short_url = url_for("student_short", mssv=mssv)
+    body += f"""
+    <p>
+        Link rút gọn:
+        <a href="{escape(short_url)}">{escape(short_url)}</a>
+    </p>
+    """
     return layout("Chi tiết sinh viên", body)
+@app.route("/sv/<mssv>")
+def student_short(mssv):
+    return redirect(url_for("student_detail", mssv=mssv), code=301)
