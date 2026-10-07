@@ -1,242 +1,39 @@
-# Sổ điểm lớp học – Bài tập tổng hợp chương 3
+# pmnm-hocphan
 
-## 1. Chạy ứng dụng
+Trần Hiếu Trung Nguyên - 23T1020350 - K47B
 
-Chạy tại thư mục `chuong_03/tong_hop` trên Windows:
+1.1
+Tôi muốn học về phần mềm mã nguồn mở vì đây là nền tảng của rất nhiều công nghệ hiện đại mà tôi sử dụng hằng ngày, từ hệ điều hành, trình duyệt cho đến các công cụ lập trình. Hiểu về mã nguồn mở giúp tôi nắm được cách cộng đồng lập trình viên trên toàn thế giới hợp tác xây dựng phần mềm minh bạch, an toàn và miễn phí. Ngoài ra, việc học mã nguồn mở còn mở ra cơ hội để tôi đọc, chỉnh sửa và đóng góp vào các dự án thực tế, từ đó nâng cao kỹ năng lập trình, tư duy giải quyết vấn đề và làm việc nhóm. Đây cũng là cách tiết kiệm chi phí đáng kể so với phần mềm thương mại, đồng thời giúp tôi hiểu sâu hơn về các mô hình giấy phép và quyền sử dụng phần mềm trong thực tế.
 
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m flask --app sodiem run --debug --port 8000
-```
+5 phần mềm mã nguồn mở đang sử dụng hằng ngày:
 
-Mở http://127.0.0.1:8000. Giữ server chạy và dùng terminal thứ hai để kiểm thử.
+Linux (Ubuntu) – Giấy phép: GNU GPL v2
+Mozilla Firefox – Giấy phép: Mozilla Public License (MPL) 2.0
+LibreOffice – Giấy phép: Mozilla Public License (MPL) v2.0
+VS Code (mã nguồn – Code OSS) – Giấy phép: MIT License
+GIMP – Giấy phép: GNU GPL v3
 
-## 2. Danh sách route
+1.2
+Báo cáo phân tích: Sự phân nhánh (fork) của OpenOffice.org thành LibreOffice
 
-Lệnh đã chạy:
+Bối cảnh dự án
 
-```powershell
-.\.venv\Scripts\python.exe -m flask --app sodiem routes
-```
+OpenOffice.org là bộ phần mềm văn phòng mã nguồn mở nổi tiếng, ra đời từ mã nguồn StarOffice được Sun Microsystems công bố năm 2000. Trong suốt một thập kỷ, dự án phát triển mạnh mẽ nhờ sự đóng góp của cộng đồng lập trình viên toàn cầu, trở thành đối thủ cạnh tranh đáng kể với Microsoft Office. Tuy nhiên, năm 2010, khi Oracle mua lại Sun Microsystems, dự án bắt đầu rơi vào khủng hoảng quản trị nghiêm trọng.
 
-Kết quả có 10 route, tính cả static:
+Nguyên nhân dẫn đến mâu thuẫn
 
-```text
-Endpoint            Methods           Rule
-------------------  ----------------  ------------------------------------
-api_student_detail  GET               /api/students/<mssv>
-api_student_list    GET               /api/students
-api_student_score   DELETE, GET, PUT  /api/students/<mssv>/scores/<course>
-home                GET               /
-search              GET               /search
-static              GET               /static/<path:filename>
-student_detail      GET               /students/<mssv>
-student_export      GET               /students/<mssv>/export
-student_list        GET               /students
-student_short       GET               /sv/<mssv>
-```
+Mâu thuẫn xuất phát từ cách Oracle quản lý dự án sau khi tiếp quản. Cộng đồng phát triển OpenOffice.org từ lâu đã bất mãn với việc Sun (và sau đó là Oracle) giữ quyền kiểm soát gần như tuyệt đối đối với mã nguồn, thương hiệu và quy trình đóng góp. Các lập trình viên bên ngoài muốn đóng góp mã nguồn phải ký thỏa thuận chuyển nhượng bản quyền cho công ty chủ quản, điều này khiến nhiều nhà phát triển cảm thấy công sức của họ không thực sự thuộc về cộng đồng mở mà bị doanh nghiệp hóa.
 
-## 3. Kết quả kiểm thử curl
+Khi Oracle tiếp quản, tình hình trở nên tồi tệ hơn. Oracle nổi tiếng với chiến lược ưu tiên lợi nhuận từ phần mềm thương mại, và ít đầu tư vào phát triển cộng đồng mã nguồn mở. Nhiều nhà phát triển lo ngại Oracle sẽ giảm đầu tư, làm chậm tốc độ phát hành, hoặc thậm chí thương mại hóa hoàn toàn dự án. Sự thiếu minh bạch trong định hướng chiến lược của Oracle càng làm gia tăng sự ngờ vực từ cộng đồng.
 
-Các kết quả dưới đây được ghi từ các lần chạy thực tế. Lệnh PUT dùng tham số query `score`. Kiểm tra DELETE và GET sau xóa đã chạy với học phần TEST; kiểm tra POST đã chạy với TEST và PMMNM.
+Sự ra đời của LibreOffice
 
-### Link rút gọn
+Trước tình hình đó, vào tháng 9 năm 2010, một nhóm các nhà phát triển kỳ cựu của OpenOffice.org đã quyết định tách nhánh (fork) mã nguồn để thành lập một dự án độc lập mang tên LibreOffice, dưới sự bảo trợ của một tổ chức phi lợi nhuận mới thành lập: The Document Foundation. Mục tiêu của họ là đảm bảo dự án được quản trị theo mô hình cộng đồng thực sự, không phụ thuộc vào bất kỳ công ty đơn lẻ nào, đồng thời loại bỏ yêu cầu chuyển nhượng bản quyền gây tranh cãi.
 
-```powershell
-curl.exe -i http://127.0.0.1:8000/sv/23T1020001
-```
+Ban đầu, The Document Foundation từng mời Oracle tham gia với tư cách thành viên sáng lập, nhưng Oracle từ chối và tiếp tục duy trì OpenOffice.org theo cách riêng. Tuy nhiên, chỉ vài tháng sau, vào tháng 4 năm 2011, Oracle tuyên bố ngừng phát triển thương mại OpenOffice.org và trao mã nguồn cho Apache Software Foundation, dẫn đến sự ra đời của Apache OpenOffice.
 
-```text
-HTTP/1.1 301 MOVED PERMANENTLY
-Location: /students/23T1020001
-```
+Hậu quả và bài học
 
-### Tải CSV
+Kết quả của cuộc phân nhánh này là sự phân tán nguồn lực cộng đồng. Phần lớn các nhà phát triển tích cực, doanh nghiệp tài trợ và các bản phân phối Linux lớn (như Ubuntu, Debian, Fedora) đã chuyển sang hỗ trợ LibreOffice, khiến dự án này nhanh chóng vượt qua OpenOffice.org về tốc độ phát triển, số lượng tính năng mới và mức độ phổ biến. Ngược lại, Apache OpenOffice dần trở nên trì trệ, với chu kỳ phát hành chậm chạp và ít thay đổi đáng kể trong nhiều năm, dù về mặt kỹ thuật dự án vẫn tồn tại.
 
-```powershell
-curl.exe -i http://127.0.0.1:8000/students/23T1020001/export
-```
-
-```text
-HTTP/1.1 200 OK
-Content-Type: text/csv; charset=utf-8
-Content-Disposition: attachment; filename=diem_23T1020001.csv
-
-hoc_phan,diem
-PMMNM,8.5
-CSDL,7.0
-MMT,9.0
-```
-
-### Lọc đồng thời lớp và điểm trung bình
-
-```powershell
-curl.exe -i "http://127.0.0.1:8000/api/students?lop=k47a&min_avg=7"
-```
-
-Trả `HTTP/1.1 200 OK`, `Content-Type: application/json`:
-
-```json
-[
-  {
-    "average": 8.17,
-    "lop": "K47A",
-    "mssv": "23T1020001",
-    "name": "Nguyễn Văn An",
-    "rank": "Khá",
-    "scores": {"CSDL": 7.0, "MMT": 9.0, "PMMNM": 8.5}
-  }
-]
-```
-
-### Tham số min_avg sai
-
-```powershell
-curl.exe -i "http://127.0.0.1:8000/api/students?min_avg=abc"
-```
-
-Trả `HTTP/1.1 400 BAD REQUEST`, `Content-Type: application/json`:
-
-```json
-{"detail": "min_avg phải là số.", "error": "Dữ liệu không hợp lệ"}
-```
-
-### Sinh viên không tồn tại
-
-```powershell
-curl.exe -i http://127.0.0.1:8000/api/students/999
-```
-
-Trả `HTTP/1.1 404 NOT FOUND`, `Content-Type: application/json`:
-
-```json
-{"detail": "Không tìm thấy sinh viên.", "error": "Không tìm thấy"}
-```
-
-### Thêm điểm WEB cho Hoàng Thu Hà
-
-```powershell
-curl.exe -i -X PUT "http://127.0.0.1:8000/api/students/23T1020005/scores/web?score=9"
-```
-
-```text
-HTTP/1.1 201 CREATED
-Content-Type: application/json
-Location: /api/students/23T1020005/scores/WEB
-```
-
-```json
-{"course": "WEB", "mssv": "23T1020005", "score": 9.0}
-```
-
-### Sửa điểm WEB
-
-```powershell
-curl.exe -i -X PUT "http://127.0.0.1:8000/api/students/23T1020005/scores/WEB?score=7.5"
-```
-
-Trả `HTTP/1.1 200 OK`, `Content-Type: application/json`:
-
-```json
-{"course": "WEB", "mssv": "23T1020005", "score": 7.5}
-```
-
-### Điểm ngoài khoảng 0–10
-
-```powershell
-curl.exe -i -X PUT "http://127.0.0.1:8000/api/students/23T1020005/scores/WEB?score=11"
-```
-
-Trả `HTTP/1.1 400 BAD REQUEST`, `Content-Type: application/json`:
-
-```json
-{"detail": "Điểm phải là số từ 0 đến 10.", "error": "Dữ liệu không hợp lệ"}
-```
-
-### Xóa điểm và xem lại điểm đã xóa
-
-Trước đó học phần TEST của sinh viên 23T1020001 đã được thêm để kiểm thử.
-
-```powershell
-curl.exe -i -X DELETE http://127.0.0.1:8000/api/students/23T1020001/scores/test
-curl.exe -i http://127.0.0.1:8000/api/students/23T1020001/scores/test
-```
-
-DELETE trả `HTTP/1.1 204 NO CONTENT`, body rỗng.
-GET sau xóa trả `HTTP/1.1 404 NOT FOUND`, mô tả “Chưa có điểm học phần này.”.
-Lần chạy này thực hiện trước khi thêm hàm xử lý lỗi chung nên body 404 khi đó là HTML mặc định.
-
-### POST tới API
-
-```powershell
-curl.exe -i -X POST http://127.0.0.1:8000/api/students/23T1020001/scores/PMMNM
-```
-
-```text
-HTTP/1.1 405 METHOD NOT ALLOWED
-Content-Type: application/json
-Allow: DELETE, HEAD, PUT, GET, OPTIONS
-```
-
-```json
-{
-  "detail": "The method is not allowed for the requested URL.",
-  "error": "Phương thức không được hỗ trợ"
-}
-```
-
-### POST tới trang HTML
-
-```powershell
-curl.exe -i -X POST http://127.0.0.1:8000/students
-```
-
-```text
-HTTP/1.1 405 METHOD NOT ALLOWED
-Content-Type: text/html; charset=utf-8
-Allow: GET, HEAD, OPTIONS
-```
-
-Body dùng layout chung, có thanh điều hướng, tiêu đề “405 - Phương thức không được hỗ trợ” và mô tả “The method is not allowed for the requested URL.”.
-
-## 4. Giải thích mã HTTP
-
-Route link rút gọn dùng 301 vì URL rút gọn chuyển hướng vĩnh viễn tới URL chi tiết sinh viên. Header Location cho biết địa chỉ đích.
-
-PUT thêm học phần chưa có dùng 201 vì tạo mới tài nguyên điểm. Header Location trỏ tới URL của tài nguyên vừa tạo. PUT sửa điểm đã tồn tại trả 200.
-
-DELETE thành công trả 204 vì đã xóa và không trả nội dung.
-
-## 5. Dữ liệu sau khi khởi động lại
-
-Đã thêm WEB cho sinh viên 23T1020005, sửa thành 7.5, sau đó dừng và chạy lại server.
-
-```powershell
-curl.exe -i http://127.0.0.1:8000/api/students/23T1020005/scores/WEB
-```
-
-Trả `HTTP/1.1 404 NOT FOUND`, `Content-Type: application/json`:
-
-```json
-{"detail": "Chưa có điểm học phần này.", "error": "Không tìm thấy"}
-```
-
-Điểm WEB không còn vì STUDENTS chỉ nằm trong bộ nhớ của tiến trình. Khi server khởi động lại, chương trình nạp dữ liệu ban đầu; thay đổi chưa được lưu vào file hoặc cơ sở dữ liệu.
-
-## 6. Request trong hàm xử lý lỗi
-
-Hàm xử lý lỗi được Flask gọi trong lúc xử lý yêu cầu. Ngữ cảnh yêu cầu vẫn còn, nên hàm đọc được request.path để chọn JSON cho /api/ và HTML cho các đường dẫn khác.
-
-## 7. Git và các file nộp
-
-Lệnh kiểm tra:
-
-```powershell
-git log --oneline
-git ls-files
-```
-
-Trước khi thêm README đã có ít nhất 11 commit hiển thị. git ls-files chỉ gồm .gitignore, requirements.txt và sodiem.py; không theo dõi .venv/.
-
-Các file nộp sau khi thêm README: sodiem.py, requirements.txt, .gitignore, README.md. Giữ lịch sử Git để đối chiếu các commit.
-
+Trường hợp này minh họa rõ ràng rằng cấu trúc quản trị và niềm tin cộng đồng là yếu tố sống còn đối với một dự án mã nguồn mở, đôi khi quan trọng hơn cả chất lượng kỹ thuật. Khi quyền lực quản trị tập trung vào một thực thể thương mại thiếu minh bạch, nguy cơ phân nhánh là rất cao, vì cộng đồng luôn có quyền "vote bằng chân" — tức là chuyển sang một nhánh khác nếu họ cảm thấy dự án gốc không còn phục vụ lợi ích chung. Bài học rút ra là các dự án mã nguồn mở cần có cơ chế quản trị minh bạch, phi tập trung và có sự tham gia thực chất của cộng đồng để duy trì tính bền vững lâu dài.
