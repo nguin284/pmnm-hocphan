@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, abort, redirect, make_response
+from flask import Flask, url_for, request, abort, redirect, make_response, jsonify
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -208,7 +208,28 @@ def search():
     return layout("Tìm kiếm", body)
 @app.route("/api/students")
 def api_student_list():
-    return []
+    selected_class = request.args.get("lop", "")
+    results = []
+
+    for mssv, student in STUDENTS.items():
+        if (
+            selected_class
+            and student["lop"].lower() != selected_class.lower()
+        ):
+            continue
+
+        summary = student_summary(mssv)
+
+        results.append({
+            "mssv": mssv,
+            "name": summary["name"],
+            "lop": summary["lop"],
+            "average": summary["average"],
+            "rank": summary["rank"],
+            "scores": summary["scores"]
+        })
+
+    return jsonify(results)
 @app.route("/students/<mssv>")
 def student_detail(mssv):
     if mssv not in STUDENTS:
