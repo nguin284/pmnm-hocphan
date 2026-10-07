@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request
+from flask import Flask, url_for, request, abort
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -177,7 +177,48 @@ def api_student_list():
     return []
 @app.route("/students/<mssv>")
 def student_detail(mssv):
-    return layout(
-        "Chi tiết sinh viên",
-        f"<h1>MSSV: {escape(mssv)}</h1>"
-    )
+    if mssv not in STUDENTS:
+        abort(
+            404,
+            description=f"Không có sinh viên với MSSV = {mssv}."
+        )
+
+    summary = student_summary(mssv)
+    avg_text = "—" if summary["average"] is None else str(summary["average"])
+
+    body = f"""
+    <h1>{escape(summary['name'])}</h1>
+    <p>MSSV: {escape(mssv)}</p>
+    <p>
+        Lớp:
+        <a href="{escape(url_for('student_list', lop=summary['lop']))}">
+            {escape(summary['lop'])}
+        </a>
+    </p>
+    <p>Điểm TB: {escape(avg_text)}</p>
+    <p>Xếp loại: {escape(summary['rank'])}</p>
+    <h2>Bảng điểm</h2>
+    """
+
+    if summary["scores"]:
+        body += """
+        <table border="1">
+            <tr>
+                <th>Học phần</th>
+                <th>Điểm</th>
+            </tr>
+        """
+
+        for course, score in summary["scores"].items():
+            body += f"""
+            <tr>
+                <td>{escape(course)}</td>
+                <td>{escape(str(score))}</td>
+            </tr>
+            """
+
+        body += "</table>"
+    else:
+        body += "<p>Chưa có điểm.</p>"
+
+    return layout("Chi tiết sinh viên", body)
