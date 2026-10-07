@@ -351,20 +351,13 @@ def api_student_score(mssv, course):
         })
 
     if request.method == "PUT":
-        data = request.get_json(silent=True)
-
-        if not isinstance(data, dict):
-            abort(400, description="Dữ liệu phải là đối tượng JSON.")
-
-        score = data.get("score")
-
-        if (
-            isinstance(score, bool)
-            or not isinstance(score, (int, float))
-            or not 0 <= score <= 10
-        ):
+        try:
+            score = float(request.args.get("score", ""))
+        except ValueError:
             abort(400, description="Điểm phải là số từ 0 đến 10.")
 
+        if not 0 <= score <= 10:
+            abort(400, description="Điểm phải là số từ 0 đến 10.")
         is_new = course not in scores
         scores[course] = score
 
@@ -419,3 +412,18 @@ def handle_error(error):
         response.headers["Content-Type"] = "text/html; charset=utf-8"
 
     return response
+@app.route("/api/students/<mssv>")
+def api_student_detail(mssv):
+    if mssv not in STUDENTS:
+        abort(404, description="Không tìm thấy sinh viên.")
+
+    summary = student_summary(mssv)
+
+    return jsonify({
+        "mssv": mssv,
+        "name": summary["name"],
+        "lop": summary["lop"],
+        "average": summary["average"],
+        "rank": summary["rank"],
+        "scores": summary["scores"]
+    })
