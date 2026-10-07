@@ -84,8 +84,31 @@ def layout(title, body):
 </html>"""
 @app.route("/")
 def home():
-    return layout("Trang chủ", "<h1>Sổ điểm lớp học</h1>")
+    total_students = len(STUDENTS)
+    classes = set()
 
+    for student in STUDENTS.values():
+        classes.add(student["lop"])
+
+    total_classes = len(classes)
+
+    body = f"""
+    <h1>Sổ điểm lớp học</h1>
+    <p>Tổng số sinh viên: {escape(str(total_students))}</p>
+    <p>Số lớp: {escape(str(total_classes))}</p>
+    <p>
+        <a href="{escape(url_for('student_list'))}">
+            Xem danh sách sinh viên
+        </a>
+    </p>
+    <p>
+        <a href="{escape(url_for('api_student_list'))}">
+            Xem API sinh viên
+        </a>
+    </p>
+    """
+
+    return layout("Trang chủ", body)
 
 @app.route("/students")
 def student_list():
@@ -95,3 +118,6 @@ def student_list():
 @app.route("/search")
 def search():
     return layout("Tìm kiếm", "<h1>Tìm kiếm sinh viên</h1>")
+@app.route("/api/students")
+def api_student_list():
+    return []
