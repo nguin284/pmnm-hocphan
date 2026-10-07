@@ -209,6 +209,15 @@ def search():
 @app.route("/api/students")
 def api_student_list():
     selected_class = request.args.get("lop", "")
+    min_avg_text = request.args.get("min_avg")
+    min_avg = None
+
+    if min_avg_text is not None:
+        try:
+            min_avg = float(min_avg_text)
+        except ValueError:
+            abort(400, description="min_avg phải là số.")
+
     results = []
 
     for mssv, student in STUDENTS.items():
@@ -219,6 +228,13 @@ def api_student_list():
             continue
 
         summary = student_summary(mssv)
+
+        if min_avg is not None:
+            if (
+                summary["average"] is None
+                or summary["average"] < min_avg
+            ):
+                continue
 
         results.append({
             "mssv": mssv,
