@@ -1,4 +1,4 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, request
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -112,8 +112,62 @@ def home():
 
 @app.route("/students")
 def student_list():
-    return layout("Sinh viên", "<h1>Danh sách sinh viên</h1>")
+    selected_class = request.args.get("lop", "")
+    classes = sorted({student["lop"] for student in STUDENTS.values()})
 
+    body = "<h1>Danh sách sinh viên</h1>"
+    body += f'<p><a href="{escape(url_for("student_list"))}">Tất cả</a>'
+
+    for lop in classes:
+        body += (
+            f' | <a href="{escape(url_for("student_list", lop=lop))}">'
+            f'{escape(lop)}</a>'
+        )
+
+    body += "</p>"
+
+    rows = ""
+
+    for mssv, student in STUDENTS.items():
+        if selected_class and student["lop"].lower() != selected_class.lower():
+            continue
+
+        summary = student_summary(mssv)
+        avg_text = "—" if summary["average"] is None else str(summary["average"])
+
+        rows += f"""
+        <tr>
+            <td>
+                <a href="{escape(url_for('student_detail', mssv=mssv))}">
+                    {escape(mssv)}
+                </a>
+            </td>
+            <td>{escape(summary['name'])}</td>
+            <td>{escape(summary['lop'])}</td>
+            <td>{escape(avg_text)}</td>
+            <td>{escape(summary['rank'])}</td>
+        </tr>
+        """
+
+    if rows:
+        body += f"""
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>MSSV</th>
+                    <th>Họ tên</th>
+                    <th>Lớp</th>
+                    <th>Điểm TB</th>
+                    <th>Xếp loại</th>
+                </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+        </table>
+        """
+    else:
+        body += "<p>Không có sinh viên phù hợp.</p>"
+
+    return layout("Sinh viên", body)
 
 @app.route("/search")
 def search():
@@ -121,3 +175,9 @@ def search():
 @app.route("/api/students")
 def api_student_list():
     return []
+@app.route("/students/<mssv>")
+def student_detail(mssv):
+    return layout(
+        "Chi tiết sinh viên",
+        f"<h1>MSSV: {escape(mssv)}</h1>"
+    )
