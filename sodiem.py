@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, abort, redirect
+from flask import Flask, url_for, request, abort, redirect, make_response
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -220,14 +220,41 @@ def student_detail(mssv):
         body += "</table>"
     else:
         body += "<p>Chưa có điểm.</p>"
+
     short_url = url_for("student_short", mssv=mssv)
     body += f"""
     <p>
         Link rút gọn:
         <a href="{escape(short_url)}">{escape(short_url)}</a>
     </p>
+    <p>
+        <a href="{escape(url_for('student_export', mssv=mssv))}">
+            Tải bảng điểm (CSV)
+        </a>
+    </p>
     """
+
     return layout("Chi tiết sinh viên", body)
 @app.route("/sv/<mssv>")
 def student_short(mssv):
     return redirect(url_for("student_detail", mssv=mssv), code=301)
+@app.route("/students/<mssv>/export")
+def student_export(mssv):
+    if mssv not in STUDENTS:
+        abort(
+            404,
+            description=f"Không có sinh viên với MSSV = {mssv}."
+        )
+
+    content = "hoc_phan,diem\n"
+
+    for course, score in STUDENTS[mssv]["scores"].items():
+        content += f"{course},{score}\n"
+
+    response = make_response(content)
+    response.headers["Content-Type"] = "text/csv; charset=utf-8"
+    response.headers["Content-Disposition"] = (
+        f"attachment; filename=diem_{mssv}.csv"
+    )
+
+    return response
